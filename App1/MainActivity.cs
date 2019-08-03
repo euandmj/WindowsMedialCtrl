@@ -108,17 +108,17 @@ namespace App1
             }
             catch (System.IO.IOException ex)
             {
-                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), ex.Message, Snackbar.LengthLong)
+                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"IOException: {ex.Message}", Snackbar.LengthLong)
                        .SetAction("Action", (View.IOnClickListener)null).Show();
             }
             catch (SocketException ex)
             {
-                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), ex.Message, Snackbar.LengthLong)
+                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"SocketException: {ex.Message}", Snackbar.LengthLong)
                        .SetAction("Action", (View.IOnClickListener)null).Show();
             }
             catch (TimeoutException ex)
             {
-                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), ex.Message, Snackbar.LengthLong)
+                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"TimeoutException: {ex.Message}", Snackbar.LengthLong)
                        .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
             }
             return -1;
@@ -143,7 +143,7 @@ namespace App1
             }
             catch(System.IO.IOException ex)
             {
-                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), ex.Message, Snackbar.LengthLong)
+                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"Error Sending Req: {ex.Message}", Snackbar.LengthLong)
                        .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
             }
         }
