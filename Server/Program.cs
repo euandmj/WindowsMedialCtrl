@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-// dotnet publish -c Release -r win10-x64
+// dotnet publish --self-contained -c Release -r win10-x64
 namespace Server
 {
     class Program

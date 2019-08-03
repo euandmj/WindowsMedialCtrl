@@ -30,7 +30,7 @@ namespace Server
         public void RunServer()
         {
 
-            listener = new TcpListener(IPAddress.Parse("192.168.1.11"), 54001);
+            listener = new TcpListener(localaddr: IPAddress.Any, port: 54001);
             listener.Start();
             Console.WriteLine("listening...");
             while (true)
