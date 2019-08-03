@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">App1</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="MEDIA_NEXT_TRACK">VK_MEDIA_NEXT_TRACK</string>
+    <string name="MEDIA_PLAY_PAUSE">VK_MEDIA_PLAY_PAUSE</string>
+    <string name="MEDIA_PREV_TRACK">VK_MEDIA_PREV_TRACK</string>
+    <string name="VOLUME_DOWN">VK_VOLUME_DOWN</string>
+    <string name="VOLUME_UP">VK_VOLUME_UP</string>
+    <string name="VOLUME_MUTE">VK_VOLUME_MUTE</string>
+</resources>

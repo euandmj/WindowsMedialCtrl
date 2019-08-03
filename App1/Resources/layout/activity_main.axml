@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/rootLayout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:layout_marginLeft="90px"
+		android:layout_marginTop="450px"
+		android:orientation="horizontal"
+       	android:layout_centerHorizontal="true"
+		android:id="@+id/volumeLayout">
+
+	
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="140px"
+			android:layout_margin="5dp"
+			android:text="-"
+			android:id="@+id/buttonReduceVol" />
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="140px"
+			android:layout_margin="5dp"
+			android:text="🔇"
+			android:id="@+id/buttonMute" />
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="140px"
+			android:layout_margin="5dp"
+			android:text="+"
+			android:id="@+id/buttonIncrVol" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_below="@id/volumeLayout"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:layout_marginLeft="100px"
+		android:layout_marginTop="50px"
+		android:orientation="horizontal"
+       	android:layout_centerHorizontal="true"
+		android:id="@+id/playbackLayout">
+	
+		<Button
+			android:layout_width="430px"
+			android:layout_height="140px"
+			android:text="⏮"
+			android:id="@+id/buttonBack" />
+		<Button
+			android:layout_width="430px"
+			android:layout_height="140px"
+			android:text="⏭ "
+			android:id="@+id/buttonForwards" />
+	</LinearLayout>	
+	
+	<LinearLayout
+		android:layout_below="@id/playbackLayout"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:layout_marginTop="50px"
+       	android:layout_centerHorizontal="true"
+		android:orientation="horizontal"
+		android:id="@+id/pauseLayout">
+
+	
+		<Button
+			android:layout_width="850px"
+			android:layout_height="140px"
+			android:textStyle="bold"
+			android:text="⏯"
+			android:id="@+id/buttonPause" />
+		
+	</LinearLayout>
+	<!--
+	<android.support.design.widget.BottomNavigationView
+		android:id="@+id/navigation"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="0dp"
+		android:layout_marginStart="0dp"
+		android:background="?android:attr/windowBackground"
+		android:layout_alignParentBottom="true"
+		app:menu="@menu/navigation" />
+	-->
+
+</RelativeLayout>
