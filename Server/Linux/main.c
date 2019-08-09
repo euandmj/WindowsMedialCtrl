@@ -36,7 +36,7 @@ void acceptClient(int sockfd){
 
         bzero(buff, MAX);
 
-        write(sockfd, "INVALID REQUEST", sizeof("INVALID REQUEST"));
+        write(sockfd, "INVALID REQUEST", 17UL);
 
         return;
     }
