@@ -56,7 +56,8 @@ namespace App1
             ((Button)FindViewById(Resource.Id.buttonForwards)).Click += this.Forwards_Click;
             ((Button)FindViewById(Resource.Id.buttonPause)).Click += this.Pause_Click;
 
-            Connect();
+            if(Connect() == 0)
+                Toast.MakeText(this, "Connected!", ToastLength.Short).Show();
         }
 
         private void ShowStartDialog(ISharedPreferences prefs)
@@ -101,7 +102,7 @@ namespace App1
 
                 if (!client.Connected)
                     throw new SocketException(-1);
-                Toast.MakeText(this, "Connected!", ToastLength.Short).Show();
+
 
                 return 0;
 
@@ -143,7 +144,7 @@ namespace App1
             }
             catch(System.IO.IOException ex)
             {
-                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"Error Sending Req: {ex.Message}", Snackbar.LengthLong)
+                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"Error Sending Req:\n{ex.Message}", Snackbar.LengthLong)
                        .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
             }
         }

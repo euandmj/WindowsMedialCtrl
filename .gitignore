@@ -9,3 +9,6 @@
 /App1/obj
 *.user
 /.vs/App1/v15
+Server/Windows/obj
+Server/Windows/bin
+/Release/Server.zip

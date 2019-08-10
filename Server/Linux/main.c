@@ -9,7 +9,7 @@
 #include <sys/types.h>
 
 #define MAX 80 
-#define PORT 5000
+#define PORT 54001
 #define SA struct sockaddr
 
 const char* VK_MEDIA_PLAY_PAUSE = "XF86AudioPlay";
