@@ -21,7 +21,9 @@ namespace App1
     public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
     {
         const string DEFAULT_HOSTNAME = "192.168.1.11";
+        const int DEFAULT_PORT = 54001;
         string hostname;
+        int port;
         TcpClient client;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -43,10 +45,11 @@ namespace App1
 
             if (b)
             {
-                ShowStartDialog(prefs);
+                ShowConfigureDialog(prefs);
             }
-            hostname = prefs.GetString(key: "hostname", defValue:DEFAULT_HOSTNAME);
-            
+            hostname = prefs.GetString(key: "hostname", defValue: DEFAULT_HOSTNAME);
+            port = prefs.GetInt(key: "port", defValue: DEFAULT_PORT);
+
 
             // events             
             ((Button)FindViewById(Resource.Id.buttonReduceVol)).Click += this.ReduceVol_Click;
@@ -60,20 +63,28 @@ namespace App1
                 Toast.MakeText(this, "Connected!", ToastLength.Short).Show();
         }
 
-        private void ShowStartDialog(ISharedPreferences prefs)
+        private void ShowConfigureDialog(ISharedPreferences prefs)
         {
             LayoutInflater layoutInflater = LayoutInflater.From(this);
             View view = layoutInflater.Inflate(Resource.Layout.hostname_input_box, null);
             Android.Support.V7.App.AlertDialog.Builder alertBuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
             alertBuilder.SetView(view);
 
-            var input = view.FindViewById<EditText>(Resource.Id.hostnameText);
+            var hostinput = view.FindViewById<EditText>(Resource.Id.hostnameText);
+            var portinput = view.FindViewById<EditText>(Resource.Id.portText);
+
+            hostinput.Text = prefs.GetString(key: "hostname", defValue: DEFAULT_HOSTNAME);
+            portinput.Text = prefs.GetInt(key: "port", defValue: DEFAULT_PORT).ToString();
+
             alertBuilder.SetCancelable(false).SetPositiveButton("Submit", delegate
             {
-                hostname = input.Text;
+                hostname = hostinput.Text;
+                port = int.Parse(portinput.Text);
+
             }).SetNegativeButton("Cancel", delegate
             {
-                hostname = "192.168.1.11";
+                hostname = DEFAULT_HOSTNAME;
+                port = DEFAULT_PORT;
                 alertBuilder.Dispose();
             });
 
@@ -84,6 +95,7 @@ namespace App1
             var editor = prefs.Edit();
             // add the hostname into the preferences
             editor.PutString("hostname", hostname);
+            editor.PutInt("port", port);
             // add a boolean tag
             editor.PutBoolean("firststart", false);
             editor.Apply();
@@ -177,6 +189,27 @@ namespace App1
         private void ReduceVol_Click(object sender, EventArgs e)
         {
             SendDWORD(Resources.GetString(Resource.String.VOLUME_DOWN));
+        }
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            this.MenuInflater.Inflate(Resource.Menu.menu_main, menu);
+
+            var item = menu.FindItem(Resource.Id.action_configure);
+
+            return base.OnCreateOptionsMenu(menu);
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            int id = item.ItemId;
+
+            if (id == Resource.Id.action_configure)
+            {
+                ShowConfigureDialog(PreferenceManager.GetDefaultSharedPreferences(this));
+            }
+
+            return base.OnOptionsItemSelected(item);
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)

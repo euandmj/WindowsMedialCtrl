@@ -8,7 +8,7 @@
         android:id="@+id/dialogTitle"  
         android:layout_width="wrap_content"  
         android:layout_height="wrap_content"  
-        android:text="Enter Hostname"  
+        android:text="Hostname"  
         android:textAppearance="?android:attr/textAppearanceLarge" />  
     <EditText  
         android:id="@+id/hostnameText"  
@@ -21,5 +21,16 @@
         android:layout_height="wrap_content"  
         android:text="Tip: IPv4 Address from the server's ipconfig"
         android:textAppearance="?android:attr/textAppearanceSmall" />  
-
+	<TextView
+		android:id="@+id/dialogTitle1"
+		android:layout_width="wrap_content"  
+        android:layout_height="wrap_content"  
+        android:text="Port"  
+        android:textAppearance="?android:attr/textAppearanceLarge" />  
+    <EditText  
+        android:id="@+id/portText"  
+        android:layout_width="match_parent"  
+        android:layout_height="wrap_content" 
+		android:inputType="number"
+        android:hint="i.e. 54001" />  
 </LinearLayout>
