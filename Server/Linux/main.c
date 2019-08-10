@@ -1,3 +1,5 @@
+/* gcc main.c -lxdo -o main */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <xdo.h>
@@ -8,7 +10,7 @@
 #include <sys/socket.h> 
 #include <sys/types.h>
 
-#define MAX 80 
+#define MAX 1024 
 #define PORT 54001
 #define SA struct sockaddr
 
@@ -36,7 +38,7 @@ void acceptClient(int sockfd){
 
         bzero(buff, MAX);
 
-        write(sockfd, "INVALID REQUEST", 17UL);
+        write(sockfd, "INVALID REQUEST", sizeof(char[16]));
 
         return;
     }
