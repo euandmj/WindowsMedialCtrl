@@ -1,8 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!--For all properties see: http://developer.android.com/guide/topics/resources/menu-resource.html-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+  <group android:id="@+id/config">
+    <item android:id="@+id/action_configure"
+       android:showAsAction="always"
+        android:title="Configure"/>
+  </group>
+
+
+  <group android:id="@+id/func">
+    <item android:id="@+id/action_shutdown"
+          android:showAsAction="always"
+          android:title="Shutdown Host"/>
+    <item android:id="@+id/action_restart"
+          android:showAsAction="always"
+          android:title="Restart Host"/>    
+  </group>
   
-  <item android:id="@+id/action_configure"
-        android:showAsAction="always"
-         android:title="Configure"/>
 </menu>

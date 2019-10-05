@@ -12,3 +12,4 @@
 Server/Windows/obj
 Server/Windows/bin
 /Release/Server.zip
+/Server/Windows/.vs/Server

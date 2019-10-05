@@ -2387,8 +2387,8 @@ namespace App1
 			// aapt resource value: 0x7f08005a
 			public const int action_bar_title = 2131230810;
 			
-			// aapt resource value: 0x7f0800be
-			public const int action_configure = 2131230910;
+			// aapt resource value: 0x7f0800bf
+			public const int action_configure = 2131230911;
 			
 			// aapt resource value: 0x7f0800a8
 			public const int action_container = 2131230888;
@@ -2416,6 +2416,12 @@ namespace App1
 			
 			// aapt resource value: 0x7f08005c
 			public const int action_mode_close_button = 2131230812;
+			
+			// aapt resource value: 0x7f0800c2
+			public const int action_restart = 2131230914;
+			
+			// aapt resource value: 0x7f0800c1
+			public const int action_shutdown = 2131230913;
 			
 			// aapt resource value: 0x7f0800aa
 			public const int action_text = 2131230890;
@@ -2501,6 +2507,9 @@ namespace App1
 			// aapt resource value: 0x7f080039
 			public const int collapseActionView = 2131230777;
 			
+			// aapt resource value: 0x7f0800be
+			public const int config = 2131230910;
+			
 			// aapt resource value: 0x7f080097
 			public const int container = 2131230871;
 			
@@ -2585,6 +2594,9 @@ namespace App1
 			// aapt resource value: 0x7f080058
 			public const int forever = 2131230808;
 			
+			// aapt resource value: 0x7f0800c0
+			public const int func = 2131230912;
+			
 			// aapt resource value: 0x7f08000a
 			public const int ghost_view = 2131230730;
 			
@@ -2654,17 +2666,17 @@ namespace App1
 			// aapt resource value: 0x7f080028
 			public const int multiply = 2131230760;
 			
-			// aapt resource value: 0x7f0800c0
-			public const int navigation_dashboard = 2131230912;
+			// aapt resource value: 0x7f0800c4
+			public const int navigation_dashboard = 2131230916;
 			
 			// aapt resource value: 0x7f08009d
 			public const int navigation_header_container = 2131230877;
 			
-			// aapt resource value: 0x7f0800bf
-			public const int navigation_home = 2131230911;
+			// aapt resource value: 0x7f0800c3
+			public const int navigation_home = 2131230915;
 			
-			// aapt resource value: 0x7f0800c1
-			public const int navigation_notifications = 2131230913;
+			// aapt resource value: 0x7f0800c5
+			public const int navigation_notifications = 2131230917;
 			
 			// aapt resource value: 0x7f08003b
 			public const int never = 2131230779;
@@ -3231,6 +3243,12 @@ namespace App1
 			
 			// aapt resource value: 0x7f09002d
 			public const int MEDIA_PREV_TRACK = 2131296301;
+			
+			// aapt resource value: 0x7f090032
+			public const int RESTART = 2131296306;
+			
+			// aapt resource value: 0x7f090031
+			public const int SHUTDOWN = 2131296305;
 			
 			// aapt resource value: 0x7f09002e
 			public const int VOLUME_DOWN = 2131296302;

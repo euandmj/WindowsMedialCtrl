@@ -132,7 +132,7 @@ namespace App1
             catch (TimeoutException ex)
             {
                 Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"TimeoutException: {ex.Message}", Snackbar.LengthLong)
-                       .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
+                       .SetAction("Action", (View.IOnClickListener)null).Show();
             }
             return -1;
         }
@@ -157,45 +157,36 @@ namespace App1
             catch(System.IO.IOException ex)
             {
                 Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"Error Sending Req:\n{ex.Message}", Snackbar.LengthLong)
-                       .SetAction("Action", (Android.Views.View.IOnClickListener)null).Show();
+                       .SetAction("Action", (View.IOnClickListener)null).Show();
             }
         }
 
-        private void Pause_Click(object sender, EventArgs e)
-        {
+        private void Pause_Click(object sender, EventArgs e) =>
             SendDWORD(Resources.GetString(Resource.String.MEDIA_PLAY_PAUSE));
-        }
 
-        private void Forwards_Click(object sender, EventArgs e)
-        {
+        private void Forwards_Click(object sender, EventArgs e) =>
             SendDWORD(Resources.GetString(Resource.String.MEDIA_NEXT_TRACK));
-        }
 
-        private void Back_Click(object sender, EventArgs e)
-        {
+        private void Back_Click(object sender, EventArgs e) =>
             SendDWORD(Resources.GetString(Resource.String.MEDIA_PREV_TRACK));
-        }
 
-        private void IncrVol_Click(object sender, EventArgs e)
-        {
+        private void IncrVol_Click(object sender, EventArgs e) =>
             SendDWORD(Resources.GetString(Resource.String.VOLUME_UP));
-        }
 
-        private void Mute_Click(object sender, EventArgs e)
-        {
+        private void Mute_Click(object sender, EventArgs e) =>
             SendDWORD(Resources.GetString(Resource.String.VOLUME_MUTE));
-        }
 
-        private void ReduceVol_Click(object sender, EventArgs e)
-        {
+        private void ReduceVol_Click(object sender, EventArgs e) =>
             SendDWORD(Resources.GetString(Resource.String.VOLUME_DOWN));
-        }
+        
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             this.MenuInflater.Inflate(Resource.Menu.menu_main, menu);
+            
 
-            var item = menu.FindItem(Resource.Id.action_configure);
+            var item = menu.FindItem(Resource.Id.action_shutdown);
+            //var item = menu.FindItem(Resource.Id.action_configure);
 
             return base.OnCreateOptionsMenu(menu);
         }
@@ -205,9 +196,11 @@ namespace App1
             int id = item.ItemId;
 
             if (id == Resource.Id.action_configure)
-            {
                 ShowConfigureDialog(PreferenceManager.GetDefaultSharedPreferences(this));
-            }
+            else if (id == Resource.Id.action_shutdown)
+                SendDWORD(Resources.GetString(Resource.String.SHUTDOWN));
+            else if (id == Resource.Id.action_restart)
+                SendDWORD(Resources.GetString(Resource.String.RESTART));
 
             return base.OnOptionsItemSelected(item);
         }

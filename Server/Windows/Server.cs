@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Diagnostics;
 
 namespace Server
 {
@@ -81,6 +82,15 @@ namespace Server
                     case "VK_VOLUME_MUTE":
                         keybd_event(VK_VOLUME_MUTE, 0, KEYEVENTF_EXTENDEDKEY, IntPtr.Zero);
                         break;
+                    case "DEVICE_SHUTDOWN":
+                        Shutdown();
+                        break;
+                    case "DEVICE_RESTART":
+                        Restart();
+                        break;
+                    case "DEVICE_LOCK":
+                        LockWorkStation();
+                        break;
                 }
             }
             catch (System.IO.IOException ex)
@@ -101,9 +111,33 @@ namespace Server
             }
         }
 
+        protected void Shutdown()
+        {
+            Console.WriteLine("foo"); return;
+            var psi = (new ProcessStartInfo("shutdown", "/s /t 5")
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false
+            });
+
+
+            Process.Start(psi);
+        }
+
+        protected void Restart()
+        {
+            var psi = (new ProcessStartInfo("shutdown", "-r /t 5")
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false
+            });
+        }
 
         [DllImport("user32.dll", SetLastError = true)]
         protected static extern void keybd_event(byte virtualkey, byte scancode, uint flags, IntPtr extrainfo);
+
+        [DllImport("user32.dll")]
+        protected static extern void LockWorkStation();
 
     }
 }
