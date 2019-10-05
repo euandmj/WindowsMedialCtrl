@@ -11,4 +11,5 @@
   <string name="VOLUME_MUTE">VK_VOLUME_MUTE</string>
   <string name="SHUTDOWN">SHUTDOWN</string>
   <string name="RESTART">RESTART</string>
+  <string name="LOCK">LOCK</string>
 </resources>

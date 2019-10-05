@@ -16,7 +16,10 @@
           android:title="Shutdown Host"/>
     <item android:id="@+id/action_restart"
           android:showAsAction="always"
-          android:title="Restart Host"/>    
+          android:title="Restart Host"/>
+    <item android:id="@+id/action_lock"
+          android:showAsAction="always"
+          android:title="Lock Host"/>
   </group>
   
 </menu>

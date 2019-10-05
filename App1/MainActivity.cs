@@ -201,6 +201,8 @@ namespace App1
                 SendDWORD(Resources.GetString(Resource.String.SHUTDOWN));
             else if (id == Resource.Id.action_restart)
                 SendDWORD(Resources.GetString(Resource.String.RESTART));
+            else if (id == Resource.Id.action_lock)
+                SendDWORD(Resources.GetString(Resource.String.LOCK));
 
             return base.OnOptionsItemSelected(item);
         }
