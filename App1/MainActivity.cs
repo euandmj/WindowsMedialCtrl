@@ -29,15 +29,7 @@ namespace App1
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_main);
-
-            //textMessage = FindViewById<TextView>(Resource.Id.message);
-            //BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
-            //navigation.SetOnNavigationItemSelectedListener(this);
-
-            //swipeRefreshLayout = FindViewById<SwipeRefreshLayout>(Resource.Id.rootLayout);
-            //swipeRefreshLayout.SetColorSchemeColors(new int[] { Android.Resource.Color.BackgroundLight });
-            //swipeRefreshLayout.Refresh ;
+            SetContentView(Resource.Layout.activity_main);           
 
             // First time initialisation
             var prefs = PreferenceManager.GetDefaultSharedPreferences(this);
@@ -59,8 +51,8 @@ namespace App1
             ((Button)FindViewById(Resource.Id.buttonForwards)).Click += this.Forwards_Click;
             ((Button)FindViewById(Resource.Id.buttonPause)).Click += this.Pause_Click;
 
-            if(Connect() == 0)
-                Toast.MakeText(this, "Connected!", ToastLength.Short).Show();
+            Connect();
+            ShowToastMessage($"Connected");
         }
 
         private void ShowConfigureDialog(ISharedPreferences prefs)
@@ -102,46 +94,29 @@ namespace App1
             
         }
 
-        private int Connect()
+        private void Connect()
         {
             try
             {
-
-                client = new TcpClient();
-                client.ReceiveTimeout = 1000;
-                client.SendTimeout = 1000;
-                client.Connect(hostname, 54001);
+                client = new TcpClient(hostname, port)
+                {
+                    ReceiveTimeout = 1000,
+                    SendTimeout = 1000
+                };
 
                 if (!client.Connected)
                     throw new SocketException(-1);
-
-
-                return 0;
-
             }
-            catch (System.IO.IOException ex)
+            catch (Exception ex)
             {
-                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"IOException: {ex.Message}", Snackbar.LengthLong)
-                       .SetAction("Action", (View.IOnClickListener)null).Show();
+                ShowSnackbarMessage(ex);
             }
-            catch (SocketException ex)
-            {
-                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"SocketException: {ex.Message}", Snackbar.LengthLong)
-                       .SetAction("Action", (View.IOnClickListener)null).Show();
-            }
-            catch (TimeoutException ex)
-            {
-                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"TimeoutException: {ex.Message}", Snackbar.LengthLong)
-                       .SetAction("Action", (View.IOnClickListener)null).Show();
-            }
-            return -1;
         }
 
         private void SendDWORD(string dword)
         {
-            if (client.Connected == false)
-                if (Connect() == -1)
-                    return;
+            if (!client.Connected)
+                Connect();
 
             try
             {
@@ -151,14 +126,22 @@ namespace App1
                 ns.Write(data, 0, data.Length);
 
                 ns.Close();
-
-                //Toast.MakeText(this, "Sent", ToastLength.Short).Show();
             }
             catch(System.IO.IOException ex)
             {
-                Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"Error Sending Req:\n{ex.Message}", Snackbar.LengthLong)
-                       .SetAction("Action", (View.IOnClickListener)null).Show();
+                ShowSnackbarMessage(ex);
             }
+        }
+
+        private void ShowToastMessage(string msg, ToastLength length = ToastLength.Short)
+        {
+            Toast.MakeText(this, msg, length).Show();
+        }
+
+        private void ShowSnackbarMessage(Exception ex, int length = Snackbar.LengthLong)
+        {
+            Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"{ex.GetType()}\n{ex.Message}", length)
+                   .SetAction("Action", (View.IOnClickListener)null).Show();
         }
 
         private void Pause_Click(object sender, EventArgs e) =>
@@ -183,11 +166,6 @@ namespace App1
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             this.MenuInflater.Inflate(Resource.Menu.menu_main, menu);
-            
-
-            var item = menu.FindItem(Resource.Id.action_shutdown);
-            //var item = menu.FindItem(Resource.Id.action_configure);
-
             return base.OnCreateOptionsMenu(menu);
         }
 
@@ -205,6 +183,23 @@ namespace App1
                 SendDWORD(Resources.GetString(Resource.String.LOCK));
 
             return base.OnOptionsItemSelected(item);
+        }
+
+        public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
+        {
+            switch (keyCode)
+            {
+                case Keycode.VolumeUp:
+                    IncrVol_Click(null, null);
+                    break;
+                case Keycode.VolumeDown:
+                    ReduceVol_Click(null, null);
+                    break;
+                case Keycode.VolumeMute:
+                    Mute_Click(null, null);
+                    break;
+            }
+            return true;
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)

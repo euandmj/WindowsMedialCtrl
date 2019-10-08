@@ -2402,6 +2402,9 @@ namespace App1
 			// aapt resource value: 0x7f0800a9
 			public const int action_image = 2131230889;
 			
+			// aapt resource value: 0x7f0800c3
+			public const int action_lock = 2131230915;
+			
 			// aapt resource value: 0x7f080003
 			public const int action_menu_divider = 2131230723;
 			
@@ -2666,17 +2669,17 @@ namespace App1
 			// aapt resource value: 0x7f080028
 			public const int multiply = 2131230760;
 			
-			// aapt resource value: 0x7f0800c4
-			public const int navigation_dashboard = 2131230916;
+			// aapt resource value: 0x7f0800c5
+			public const int navigation_dashboard = 2131230917;
 			
 			// aapt resource value: 0x7f08009d
 			public const int navigation_header_container = 2131230877;
 			
-			// aapt resource value: 0x7f0800c3
-			public const int navigation_home = 2131230915;
+			// aapt resource value: 0x7f0800c4
+			public const int navigation_home = 2131230916;
 			
-			// aapt resource value: 0x7f0800c5
-			public const int navigation_notifications = 2131230917;
+			// aapt resource value: 0x7f0800c6
+			public const int navigation_notifications = 2131230918;
 			
 			// aapt resource value: 0x7f08003b
 			public const int never = 2131230779;
@@ -3234,6 +3237,9 @@ namespace App1
 		
 		public partial class String
 		{
+			
+			// aapt resource value: 0x7f090033
+			public const int LOCK = 2131296307;
 			
 			// aapt resource value: 0x7f09002b
 			public const int MEDIA_NEXT_TRACK = 2131296299;

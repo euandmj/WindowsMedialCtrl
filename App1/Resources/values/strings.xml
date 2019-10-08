@@ -9,7 +9,7 @@
   <string name="VOLUME_DOWN">VK_VOLUME_DOWN</string>
   <string name="VOLUME_UP">VK_VOLUME_UP</string>
   <string name="VOLUME_MUTE">VK_VOLUME_MUTE</string>
-  <string name="SHUTDOWN">SHUTDOWN</string>
-  <string name="RESTART">RESTART</string>
-  <string name="LOCK">LOCK</string>
+  <string name="SHUTDOWN">DEVICE_SHUTDOWN</string>
+  <string name="RESTART">DEVICE_RESTART</string>
+  <string name="LOCK">DEVICE_LOCK</string>
 </resources>
