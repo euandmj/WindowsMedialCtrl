@@ -93,27 +93,14 @@ namespace Server
                         break;
                 }
             }
-            catch (System.IO.IOException ex)
+            catch(Exception ex)
             {
-                Console.WriteLine($"IOException: {ex.Message}");
-            }
-            catch (TimeoutException ex)
-            {
-                Console.WriteLine($"TimeoutException: {ex.Message}");
-            }
-            catch (ArgumentNullException ex)
-            {
-                Console.WriteLine($"ArgumentNullException: {ex.Message}");
-            }
-            catch (SocketException ex)
-            {
-                Console.WriteLine($"SocketException: {ex.Message}");
+                Console.WriteLine($"{ex.GetType()}: {ex.Message}");
             }
         }
 
         protected void Shutdown()
         {
-            Console.WriteLine("foo"); return;
             var psi = (new ProcessStartInfo("shutdown", "/s /t 5")
             {
                 CreateNoWindow = true,
