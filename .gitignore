@@ -8,7 +8,7 @@
 /App1/bin
 /App1/obj
 *.user
-/.vs/App1/v15
+*.vs
 Server/Windows/obj
 Server/Windows/bin
 /Release/Server.zip

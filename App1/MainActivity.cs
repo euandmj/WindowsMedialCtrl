@@ -68,7 +68,8 @@ namespace App1
             hostinput.Text = prefs.GetString(key: "hostname", defValue: DEFAULT_HOSTNAME);
             portinput.Text = prefs.GetInt(key: "port", defValue: DEFAULT_PORT).ToString();
 
-            alertBuilder.SetCancelable(false).SetPositiveButton("Submit", delegate
+            alertBuilder.SetCancelable(false)
+                .SetPositiveButton("Submit", delegate
             {
                 hostname = hostinput.Text;
                 port = int.Parse(portinput.Text);
@@ -131,6 +132,10 @@ namespace App1
             {
                 ShowSnackbarMessage(ex);
             }
+            catch(TimeoutException)
+            {
+                ShowSnackbarMessage("Request Timed Out", Snackbar.LengthLong);
+            }
         }
 
         private void ShowToastMessage(string msg, ToastLength length = ToastLength.Short)
@@ -140,9 +145,12 @@ namespace App1
 
         private void ShowSnackbarMessage(Exception ex, int length = Snackbar.LengthLong)
         {
-            Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), $"{ex.GetType()}\n{ex.Message}", length)
-                   .SetAction("Action", (View.IOnClickListener)null).Show();
+            ShowSnackbarMessage($"{ex.GetType()}\n{ex.Message}", length);
         }
+
+        private void ShowSnackbarMessage(string message, int length) =>
+            Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), message, length)
+                .SetAction("Action", (View.IOnClickListener)null).Show();
 
         private void Pause_Click(object sender, EventArgs e) =>
             SendDWORD(Resources.GetString(Resource.String.MEDIA_PLAY_PAUSE));
@@ -200,6 +208,20 @@ namespace App1
                     break;
             }
             return true;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+
+            // events             
+            ((Button)FindViewById(Resource.Id.buttonReduceVol)).Click -= this.ReduceVol_Click;
+            ((Button)FindViewById(Resource.Id.buttonMute)).Click -= this.Mute_Click;
+            ((Button)FindViewById(Resource.Id.buttonIncrVol)).Click -= this.IncrVol_Click;
+            ((Button)FindViewById(Resource.Id.buttonBack)).Click -= this.Back_Click;
+            ((Button)FindViewById(Resource.Id.buttonForwards)).Click -= this.Forwards_Click;
+            ((Button)FindViewById(Resource.Id.buttonPause)).Click -= this.Pause_Click;
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
