@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <StartupObject>Server.Program</StartupObject>
+    <AssemblyName>winmediactrl Server</AssemblyName>
   </PropertyGroup>
 
 </Project>

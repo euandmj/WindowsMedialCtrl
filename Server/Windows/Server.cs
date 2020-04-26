@@ -47,7 +47,7 @@ namespace Server
 
         protected void HandleRequest(TcpClient client)
         {
-            var ns = client.GetStream();
+            using var ns = client.GetStream();
 
             try
             {
@@ -61,22 +61,22 @@ namespace Server
                 switch (recv.TrimEnd())
                 {
                     case "VK_MEDIA_PLAY_PAUSE":
-                        keybd_event(VK_MEDIA_PLAY_PAUSE, 0, KEYEVENTF_EXTENDEDKEY, IntPtr.Zero);
+                        SendKeyEvent(VK_MEDIA_PLAY_PAUSE);
                         break;
                     case "VK_MEDIA_NEXT_TRACK":
-                        keybd_event(VK_MEDIA_NEXT_TRACK, 0, KEYEVENTF_EXTENDEDKEY, IntPtr.Zero);
+                        SendKeyEvent(VK_MEDIA_NEXT_TRACK);
                         break;
                     case "VK_MEDIA_PREV_TRACK":
-                        keybd_event(VK_MEDIA_PREV_TRACK, 0, KEYEVENTF_EXTENDEDKEY, IntPtr.Zero);
+                        SendKeyEvent(VK_MEDIA_PREV_TRACK);
                         break;
                     case "VK_VOLUME_DOWN":
-                        keybd_event(VK_VOLUME_DOWN, 0, KEYEVENTF_EXTENDEDKEY, IntPtr.Zero);
+                        SendKeyEvent(VK_VOLUME_DOWN);
                         break;
                     case "VK_VOLUME_UP":
-                        keybd_event(VK_VOLUME_UP, 0, KEYEVENTF_EXTENDEDKEY, IntPtr.Zero);
+                        SendKeyEvent(VK_VOLUME_UP);
                         break;
                     case "VK_VOLUME_MUTE":
-                        keybd_event(VK_VOLUME_MUTE, 0, KEYEVENTF_EXTENDEDKEY, IntPtr.Zero);
+                        SendKeyEvent(VK_VOLUME_MUTE);
                         break;
                     case "DEVICE_SHUTDOWN":
                         Shutdown();
@@ -112,6 +112,9 @@ namespace Server
                 UseShellExecute = false
             });
         }
+
+        protected void SendKeyEvent(byte virtualkey) =>
+            keybd_event(virtualkey, 0, KEYEVENTF_EXTENDEDKEY, IntPtr.Zero);
 
         [DllImport("user32.dll", SetLastError = true)]
         protected static extern void keybd_event(byte virtualkey, byte scancode, uint flags, IntPtr extrainfo);
