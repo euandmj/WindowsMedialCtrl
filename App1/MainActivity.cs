@@ -14,13 +14,14 @@ using System;
 using Android.Content;
 using Android.Preferences;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace App1
 {
     [Activity(Label = "Shutup Netflix", Theme = "@style/AppTheme", MainLauncher = true)]
     public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
     {
-        const string DEFAULT_HOSTNAME = "192.168.1.11";
+        const string DEFAULT_HOSTNAME = "192.168.1.219";
         const int DEFAULT_PORT = 54001;
         string hostname;
         int port;
@@ -37,11 +38,10 @@ namespace App1
 
             if (b)
             {
-                ShowConfigureDialog(prefs);
+                ShowConfigureDialog();
             }
             hostname = prefs.GetString(key: "hostname", defValue: DEFAULT_HOSTNAME);
             port = prefs.GetInt(key: "port", defValue: DEFAULT_PORT);
-
 
             // events             
             ((Button)FindViewById(Resource.Id.buttonReduceVol)).Click += this.ReduceVol_Click;
@@ -52,47 +52,40 @@ namespace App1
             ((Button)FindViewById(Resource.Id.buttonPause)).Click += this.Pause_Click;
 
             Connect();
-            ShowToastMessage($"Connected");
+            if(client.Connected) ShowToastMessage($"Connected");
         }
 
-        private void ShowConfigureDialog(ISharedPreferences prefs)
+        private void ShowConfigureDialog()
         {
-            LayoutInflater layoutInflater = LayoutInflater.From(this);
-            View view = layoutInflater.Inflate(Resource.Layout.hostname_input_box, null);
-            Android.Support.V7.App.AlertDialog.Builder alertBuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
+            var layoutInflater = LayoutInflater.From(this);
+            var view = layoutInflater.Inflate(Resource.Layout.hostname_input_box, null);
+            var alertBuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
             alertBuilder.SetView(view);
 
             var hostinput = view.FindViewById<EditText>(Resource.Id.hostnameText);
             var portinput = view.FindViewById<EditText>(Resource.Id.portText);
 
-            hostinput.Text = prefs.GetString(key: "hostname", defValue: DEFAULT_HOSTNAME);
-            portinput.Text = prefs.GetInt(key: "port", defValue: DEFAULT_PORT).ToString();
+            hostinput.Text = hostname;
+            portinput.Text = port.ToString();
 
             alertBuilder.SetCancelable(false)
                 .SetPositiveButton("Submit", delegate
             {
                 hostname = hostinput.Text;
                 port = int.Parse(portinput.Text);
+                PutPreferences(new (string key, object arg)[] { ("hostname", hostname), ("port", port) });
 
             }).SetNegativeButton("Cancel", delegate
             {
                 hostname = DEFAULT_HOSTNAME;
                 port = DEFAULT_PORT;
+                PutPreferences(new (string key, object arg)[] { ("hostname", hostname), ("port", port) });
                 alertBuilder.Dispose();
             });
 
-            Android.Support.V7.App.AlertDialog dialog = alertBuilder.Create();
+            var dialog = alertBuilder.Create();
             dialog.Show();
-
-
-            var editor = prefs.Edit();
-            // add the hostname into the preferences
-            editor.PutString("hostname", hostname);
-            editor.PutInt("port", port);
-            // add a boolean tag
-            editor.PutBoolean("firststart", false);
-            editor.Apply();
-            
+            PutPreferences(new (string key, object arg)[] { ("firsstart", false) });
         }
 
         private void Connect()
@@ -108,6 +101,10 @@ namespace App1
                 if (!client.Connected)
                     throw new SocketException(-1);
             }
+            catch(TimeoutException)
+            {
+
+            }
             catch (Exception ex)
             {
                 ShowSnackbarMessage(ex);
@@ -116,17 +113,15 @@ namespace App1
 
         private void SendDWORD(string dword)
         {
+            if (client is null) return;
             if (!client.Connected)
                 Connect();
 
             try
             {
-                var ns = client.GetStream();
+                using var ns = client.GetStream();
                 byte[] data = Encoding.UTF8.GetBytes(dword);
-
                 ns.Write(data, 0, data.Length);
-
-                ns.Close();
             }
             catch(System.IO.IOException ex)
             {
@@ -182,7 +177,7 @@ namespace App1
             int id = item.ItemId;
 
             if (id == Resource.Id.action_configure)
-                ShowConfigureDialog(PreferenceManager.GetDefaultSharedPreferences(this));
+                ShowConfigureDialog();
             else if (id == Resource.Id.action_shutdown)
                 SendDWORD(Resources.GetString(Resource.String.SHUTDOWN));
             else if (id == Resource.Id.action_restart)
@@ -193,7 +188,7 @@ namespace App1
             return base.OnOptionsItemSelected(item);
         }
 
-        public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
+        public override bool OnKeyDown(Keycode keyCode, KeyEvent e)
         {
             switch (keyCode)
             {
@@ -222,6 +217,32 @@ namespace App1
             ((Button)FindViewById(Resource.Id.buttonBack)).Click -= this.Back_Click;
             ((Button)FindViewById(Resource.Id.buttonForwards)).Click -= this.Forwards_Click;
             ((Button)FindViewById(Resource.Id.buttonPause)).Click -= this.Pause_Click;
+        }
+
+        private void PutPreferences((string key, object arg)[] args)
+        {
+            var prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+
+            var editor = prefs.Edit();
+            
+            foreach(var (key, arg) in args)
+            {
+                var t = arg.GetType();
+
+                if (arg is string)
+                    editor.PutString(key, (string)arg);
+                else if (arg is int)
+                    editor.PutInt(key, (int)arg);
+                else if (arg is bool)
+                    editor.PutBoolean(key, (bool)arg);
+                else if (arg is float)
+                    editor.PutFloat(key, (float)arg);
+                else if (arg is long)
+                    editor.PutLong(key, (long)arg);
+                else
+                    throw new ArgumentException($"{nameof(arg)} is not a supported type.");                
+            }
+            editor.Apply();
         }
 
         public bool OnNavigationItemSelected(IMenuItem item)
