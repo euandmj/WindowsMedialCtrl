@@ -6,6 +6,4 @@ Check the [google drive](https://drive.google.com/drive/folders/1-W3xm20OHK0kHNU
 
 * Note that the linux server requires xdotool found [here](https://www.semicomplete.com/projects/xdotool/)
 
-* Client has ip config- clone and build server to config your port
-
 <div style="text-align:center"><img src=https://github.com/euandmj/WindowsMedialCtrl/blob/master/Release/build_images/Screenshot_20190803-225534.jpg width="356" height="633">
