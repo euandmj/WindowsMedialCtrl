@@ -1,20 +1,13 @@
-﻿using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-
-using Android.App;
+﻿using Android.App;
 using Android.OS;
-using Android.Runtime;
+using Android.Preferences;
 using Android.Support.Design.Widget;
-using Android.Support.V4.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using System;
-using Android.Content;
-using Android.Preferences;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using System.Net.Sockets;
+using System.Text;
 
 namespace App1
 {
@@ -25,12 +18,11 @@ namespace App1
         const int DEFAULT_PORT = 54001;
         string hostname;
         int port;
-        TcpClient client;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_main);           
+            SetContentView(Resource.Layout.activity_main);
 
             // First time initialisation
             var prefs = PreferenceManager.GetDefaultSharedPreferences(this);
@@ -50,9 +42,6 @@ namespace App1
             ((Button)FindViewById(Resource.Id.buttonBack)).Click += this.Back_Click;
             ((Button)FindViewById(Resource.Id.buttonForwards)).Click += this.Forwards_Click;
             ((Button)FindViewById(Resource.Id.buttonPause)).Click += this.Pause_Click;
-
-            Connect();
-            if(client.Connected) ShowToastMessage($"Connected");
         }
 
         private void ShowConfigureDialog()
@@ -88,22 +77,30 @@ namespace App1
             PutPreferences(new (string key, object arg)[] { ("firsstart", false) });
         }
 
-        private void Connect()
+        private async void SendDWORD(string dword)
         {
             try
             {
-                client = new TcpClient(hostname, port)
+                using var client = new TcpClient()
                 {
                     ReceiveTimeout = 1000,
                     SendTimeout = 1000
                 };
 
                 if (!client.Connected)
-                    throw new SocketException(-1);
-            }
-            catch(TimeoutException)
-            {
+                    await client.ConnectAsync(hostname, port);
 
+                using var ns = client.GetStream();
+                byte[] data = Encoding.UTF8.GetBytes(dword);
+                await ns.WriteAsync(data, 0, data.Length);
+            }
+            catch (InvalidOperationException)
+            {
+                ShowSnackbarMessage("Unable to send request.");
+            }
+            catch (TimeoutException)
+            {
+                ShowSnackbarMessage("Request Timed Out");
             }
             catch (Exception ex)
             {
@@ -111,39 +108,12 @@ namespace App1
             }
         }
 
-        private void SendDWORD(string dword)
-        {
-            if (client is null) return;
-            if (!client.Connected)
-                Connect();
-
-            try
-            {
-                using var ns = client.GetStream();
-                byte[] data = Encoding.UTF8.GetBytes(dword);
-                ns.Write(data, 0, data.Length);
-            }
-            catch(System.IO.IOException ex)
-            {
-                ShowSnackbarMessage(ex);
-            }
-            catch(TimeoutException)
-            {
-                ShowSnackbarMessage("Request Timed Out", Snackbar.LengthLong);
-            }
-        }
-
-        private void ShowToastMessage(string msg, ToastLength length = ToastLength.Short)
-        {
-            Toast.MakeText(this, msg, length).Show();
-        }
-
         private void ShowSnackbarMessage(Exception ex, int length = Snackbar.LengthLong)
         {
             ShowSnackbarMessage($"{ex.GetType()}\n{ex.Message}", length);
         }
 
-        private void ShowSnackbarMessage(string message, int length) =>
+        private void ShowSnackbarMessage(string message, int length = Snackbar.LengthLong) =>
             Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), message, length)
                 .SetAction("Action", (View.IOnClickListener)null).Show();
 
@@ -164,7 +134,7 @@ namespace App1
 
         private void ReduceVol_Click(object sender, EventArgs e) =>
             SendDWORD(Resources.GetString(Resource.String.VOLUME_DOWN));
-        
+
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
@@ -221,26 +191,26 @@ namespace App1
 
         private void PutPreferences((string key, object arg)[] args)
         {
-            var prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            using var prefs = PreferenceManager.GetDefaultSharedPreferences(this);
 
             var editor = prefs.Edit();
-            
-            foreach(var (key, arg) in args)
+
+            foreach (var (key, arg) in args)
             {
                 var t = arg.GetType();
 
-                if (arg is string)
-                    editor.PutString(key, (string)arg);
-                else if (arg is int)
-                    editor.PutInt(key, (int)arg);
-                else if (arg is bool)
-                    editor.PutBoolean(key, (bool)arg);
-                else if (arg is float)
-                    editor.PutFloat(key, (float)arg);
-                else if (arg is long)
-                    editor.PutLong(key, (long)arg);
+                if (arg is string @string)
+                    editor.PutString(key, @string);
+                else if (arg is int @int)
+                    editor.PutInt(key, @int);
+                else if (arg is bool boolean)
+                    editor.PutBoolean(key, boolean);
+                else if (arg is float single)
+                    editor.PutFloat(key, single);
+                else if (arg is long int1)
+                    editor.PutLong(key, int1);
                 else
-                    throw new ArgumentException($"{nameof(arg)} is not a supported type.");                
+                    throw new ArgumentException($"{nameof(arg)} is not a supported type.");
             }
             editor.Apply();
         }
