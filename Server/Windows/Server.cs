@@ -35,10 +35,9 @@ namespace Server
             {
                 try
                 {
-                    TcpClient client = listener.AcceptTcpClient();
+                    var client = listener.AcceptTcpClient();
 
                     new Thread(() => HandleRequest(client)).Start();
-
                 }
                 catch (Exception ex) { Console.WriteLine(ex.Message); }
 
@@ -92,6 +91,10 @@ namespace Server
             catch(Exception ex)
             {
                 Console.WriteLine($"{ex.GetType()}: {ex.Message}");
+            }
+            finally
+            {
+                client.Close();
             }
         }
 
