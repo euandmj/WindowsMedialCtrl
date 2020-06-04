@@ -14,10 +14,15 @@ namespace App1
     [Activity(Label = "Shutup Netflix", Theme = "@style/AppTheme", MainLauncher = true)]
     public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
     {
-        const string DEFAULT_HOSTNAME = "192.168.1.219";
-        const int DEFAULT_PORT = 54001;
-        string hostname;
-        int port;
+        private const int DEFAULT_PORT = 54001;
+        private const string DEFAULT_HOSTNAME = "192.168.1.219";
+        private const string FIRST_START = "firststart";
+        private readonly RemoteClient _Client;
+
+        public MainActivity()
+        {
+            _Client = new RemoteClient();
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -25,23 +30,30 @@ namespace App1
             SetContentView(Resource.Layout.activity_main);
 
             // First time initialisation
-            var prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-            bool b = prefs.GetBoolean(key: "firststart", defValue: true);
-
-            if (b)
-            {
-                ShowConfigureDialog();
-            }
-            hostname = prefs.GetString(key: "hostname", defValue: DEFAULT_HOSTNAME);
-            port = prefs.GetInt(key: "port", defValue: DEFAULT_PORT);
+            InitFirstStart();
 
             // events             
+            _Client.SnackEvent += this._Client_SnackEvent;
             ((Button)FindViewById(Resource.Id.buttonReduceVol)).Click += this.ReduceVol_Click;
             ((Button)FindViewById(Resource.Id.buttonMute)).Click += this.Mute_Click;
             ((Button)FindViewById(Resource.Id.buttonIncrVol)).Click += this.IncrVol_Click;
             ((Button)FindViewById(Resource.Id.buttonBack)).Click += this.Back_Click;
             ((Button)FindViewById(Resource.Id.buttonForwards)).Click += this.Forwards_Click;
             ((Button)FindViewById(Resource.Id.buttonPause)).Click += this.Pause_Click;
+        }
+
+        private void InitFirstStart()
+        {
+            using var prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+
+            bool isFirstStart = prefs.GetBoolean(key: FIRST_START, defValue: true);
+
+            if (isFirstStart)
+            {
+                ShowConfigureDialog();
+            }
+            _Client.Hostname = prefs.GetString(key: "hostname", defValue: DEFAULT_HOSTNAME);
+            _Client.Port = prefs.GetInt(key: "port", defValue: DEFAULT_PORT);
         }
 
         private void ShowConfigureDialog()
@@ -54,63 +66,27 @@ namespace App1
             var hostinput = view.FindViewById<EditText>(Resource.Id.hostnameText);
             var portinput = view.FindViewById<EditText>(Resource.Id.portText);
 
-            hostinput.Text = hostname;
-            portinput.Text = port.ToString();
+            hostinput.Text = _Client.Hostname;
+            portinput.Text = _Client.Port.ToString();
 
             alertBuilder.SetCancelable(false)
                 .SetPositiveButton("Submit", delegate
             {
-                hostname = hostinput.Text;
-                port = int.Parse(portinput.Text);
-                PutPreferences(new (string key, object arg)[] { ("hostname", hostname), ("port", port) });
+                _Client.Hostname = hostinput.Text;
+                _Client.Port = int.Parse(portinput.Text);
+                PutPreferences(new (string key, object arg)[] { ("hostname", _Client.Hostname), ("port", _Client.Port) });
 
             }).SetNegativeButton("Cancel", delegate
             {
-                hostname = DEFAULT_HOSTNAME;
-                port = DEFAULT_PORT;
-                PutPreferences(new (string key, object arg)[] { ("hostname", hostname), ("port", port) });
+                _Client.Hostname = DEFAULT_HOSTNAME;
+                _Client.Port = DEFAULT_PORT;
+                PutPreferences(new (string key, object arg)[] { ("hostname", _Client.Hostname), ("port", _Client.Port) });
                 alertBuilder.Dispose();
             });
 
             var dialog = alertBuilder.Create();
             dialog.Show();
-            PutPreferences(new (string key, object arg)[] { ("firsstart", false) });
-        }
-
-        private async void SendDWORD(string dword)
-        {
-            try
-            {
-                using var client = new TcpClient()
-                {
-                    ReceiveTimeout = 1000,
-                    SendTimeout = 1000
-                };
-
-                if (!client.Connected)
-                    await client.ConnectAsync(hostname, port);
-
-                using var ns = client.GetStream();
-                byte[] data = Encoding.UTF8.GetBytes(dword);
-                await ns.WriteAsync(data, 0, data.Length);
-            }
-            catch (InvalidOperationException)
-            {
-                ShowSnackbarMessage("Unable to send request.");
-            }
-            catch (TimeoutException)
-            {
-                ShowSnackbarMessage("Request Timed Out");
-            }
-            catch (Exception ex)
-            {
-                ShowSnackbarMessage(ex);
-            }
-        }
-
-        private void ShowSnackbarMessage(Exception ex, int length = Snackbar.LengthLong)
-        {
-            ShowSnackbarMessage($"{ex.GetType()}\n{ex.Message}", length);
+            PutPreferences(new (string key, object arg)[] { (FIRST_START, false) });
         }
 
         private void ShowSnackbarMessage(string message, int length = Snackbar.LengthLong) =>
@@ -118,22 +94,22 @@ namespace App1
                 .SetAction("Action", (View.IOnClickListener)null).Show();
 
         private void Pause_Click(object sender, EventArgs e) =>
-            SendDWORD(Resources.GetString(Resource.String.MEDIA_PLAY_PAUSE));
+            _Client.SendDWORD(Resources.GetString(Resource.String.MEDIA_PLAY_PAUSE));
 
         private void Forwards_Click(object sender, EventArgs e) =>
-            SendDWORD(Resources.GetString(Resource.String.MEDIA_NEXT_TRACK));
+            _Client.SendDWORD(Resources.GetString(Resource.String.MEDIA_NEXT_TRACK));
 
         private void Back_Click(object sender, EventArgs e) =>
-            SendDWORD(Resources.GetString(Resource.String.MEDIA_PREV_TRACK));
+            _Client.SendDWORD(Resources.GetString(Resource.String.MEDIA_PREV_TRACK));
 
         private void IncrVol_Click(object sender, EventArgs e) =>
-            SendDWORD(Resources.GetString(Resource.String.VOLUME_UP));
+            _Client.SendDWORD(Resources.GetString(Resource.String.VOLUME_UP));
 
         private void Mute_Click(object sender, EventArgs e) =>
-            SendDWORD(Resources.GetString(Resource.String.VOLUME_MUTE));
+            _Client.SendDWORD(Resources.GetString(Resource.String.VOLUME_MUTE));
 
         private void ReduceVol_Click(object sender, EventArgs e) =>
-            SendDWORD(Resources.GetString(Resource.String.VOLUME_DOWN));
+            _Client.SendDWORD(Resources.GetString(Resource.String.VOLUME_DOWN));
 
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -149,13 +125,18 @@ namespace App1
             if (id == Resource.Id.action_configure)
                 ShowConfigureDialog();
             else if (id == Resource.Id.action_shutdown)
-                SendDWORD(Resources.GetString(Resource.String.SHUTDOWN));
+                _Client.SendDWORD(Resources.GetString(Resource.String.SHUTDOWN));
             else if (id == Resource.Id.action_restart)
-                SendDWORD(Resources.GetString(Resource.String.RESTART));
+                _Client.SendDWORD(Resources.GetString(Resource.String.RESTART));
             else if (id == Resource.Id.action_lock)
-                SendDWORD(Resources.GetString(Resource.String.LOCK));
+                _Client.SendDWORD(Resources.GetString(Resource.String.LOCK));
 
             return base.OnOptionsItemSelected(item);
+        }
+
+        private void _Client_SnackEvent(object sender, Events.SnackbarEventArgs e)
+        {
+            ShowSnackbarMessage(e.Message);
         }
 
         public override bool OnKeyDown(Keycode keyCode, KeyEvent e)
@@ -173,20 +154,6 @@ namespace App1
                     break;
             }
             return true;
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-
-
-            // events             
-            ((Button)FindViewById(Resource.Id.buttonReduceVol)).Click -= this.ReduceVol_Click;
-            ((Button)FindViewById(Resource.Id.buttonMute)).Click -= this.Mute_Click;
-            ((Button)FindViewById(Resource.Id.buttonIncrVol)).Click -= this.IncrVol_Click;
-            ((Button)FindViewById(Resource.Id.buttonBack)).Click -= this.Back_Click;
-            ((Button)FindViewById(Resource.Id.buttonForwards)).Click -= this.Forwards_Click;
-            ((Button)FindViewById(Resource.Id.buttonPause)).Click -= this.Pause_Click;
         }
 
         private void PutPreferences((string key, object arg)[] args)
@@ -230,6 +197,20 @@ namespace App1
             //        return true;
             //}
             return false;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            // events
+            _Client.SnackEvent -= _Client_SnackEvent;
+            ((Button)FindViewById(Resource.Id.buttonReduceVol)).Click -= this.ReduceVol_Click;
+            ((Button)FindViewById(Resource.Id.buttonMute)).Click -= this.Mute_Click;
+            ((Button)FindViewById(Resource.Id.buttonIncrVol)).Click -= this.IncrVol_Click;
+            ((Button)FindViewById(Resource.Id.buttonBack)).Click -= this.Back_Click;
+            ((Button)FindViewById(Resource.Id.buttonForwards)).Click -= this.Forwards_Click;
+            ((Button)FindViewById(Resource.Id.buttonPause)).Click -= this.Pause_Click;
         }
     }
 }
