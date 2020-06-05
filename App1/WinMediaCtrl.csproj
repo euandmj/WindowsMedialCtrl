@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="Events\SnackbarEventArgs.cs" />
+    <Compile Include="Graphics\SnackFactory.cs" />
     <Compile Include="Graphics\ToastFactory.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />

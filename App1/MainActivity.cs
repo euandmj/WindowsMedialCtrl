@@ -5,9 +5,8 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
+using App1.Graphics;
 using System;
-using System.Net.Sockets;
-using System.Text;
 
 namespace App1
 {
@@ -33,13 +32,13 @@ namespace App1
             InitFirstStart();
 
             // events             
-            _Client.SnackEvent += this._Client_SnackEvent;
+            _Client.SnackEvent += this.Client_SnackEvent;
             ((Button)FindViewById(Resource.Id.buttonReduceVol)).Click += this.ReduceVol_Click;
-            ((Button)FindViewById(Resource.Id.buttonMute)).Click += this.Mute_Click;
-            ((Button)FindViewById(Resource.Id.buttonIncrVol)).Click += this.IncrVol_Click;
-            ((Button)FindViewById(Resource.Id.buttonBack)).Click += this.Back_Click;
-            ((Button)FindViewById(Resource.Id.buttonForwards)).Click += this.Forwards_Click;
-            ((Button)FindViewById(Resource.Id.buttonPause)).Click += this.Pause_Click;
+            ((Button)FindViewById(Resource.Id.buttonMute)).Click      += this.Mute_Click;
+            ((Button)FindViewById(Resource.Id.buttonIncrVol)).Click   += this.IncrVol_Click;
+            ((Button)FindViewById(Resource.Id.buttonBack)).Click      += this.Back_Click;
+            ((Button)FindViewById(Resource.Id.buttonForwards)).Click  += this.Forwards_Click;
+            ((Button)FindViewById(Resource.Id.buttonPause)).Click     += this.Pause_Click;
         }
 
         private void InitFirstStart()
@@ -89,10 +88,6 @@ namespace App1
             PutPreferences(new (string key, object arg)[] { (FIRST_START, false) });
         }
 
-        private void ShowSnackbarMessage(string message, int length = Snackbar.LengthLong) =>
-            Snackbar.Make(FindViewById<View>(Resource.Id.rootLayout), message, length)
-                .SetAction("Action", (View.IOnClickListener)null).Show();
-
         private void Pause_Click(object sender, EventArgs e) =>
             _Client.SendDWORD(Resources.GetString(Resource.String.MEDIA_PLAY_PAUSE));
 
@@ -134,9 +129,10 @@ namespace App1
             return base.OnOptionsItemSelected(item);
         }
 
-        private void _Client_SnackEvent(object sender, Events.SnackbarEventArgs e)
+        private void Client_SnackEvent(object sender, Events.SnackbarEventArgs e)
         {
-            ShowSnackbarMessage(e.Message);
+            SnackFactory.ShowSnackbarMessage(FindViewById<View>(Resource.Id.rootLayout),
+                e.Message, Snackbar.LengthLong);
         }
 
         public override bool OnKeyDown(Keycode keyCode, KeyEvent e)
@@ -204,13 +200,13 @@ namespace App1
             base.OnDestroy();
 
             // events
-            _Client.SnackEvent -= _Client_SnackEvent;
+            _Client.SnackEvent -= Client_SnackEvent;
             ((Button)FindViewById(Resource.Id.buttonReduceVol)).Click -= this.ReduceVol_Click;
-            ((Button)FindViewById(Resource.Id.buttonMute)).Click -= this.Mute_Click;
-            ((Button)FindViewById(Resource.Id.buttonIncrVol)).Click -= this.IncrVol_Click;
-            ((Button)FindViewById(Resource.Id.buttonBack)).Click -= this.Back_Click;
-            ((Button)FindViewById(Resource.Id.buttonForwards)).Click -= this.Forwards_Click;
-            ((Button)FindViewById(Resource.Id.buttonPause)).Click -= this.Pause_Click;
+            ((Button)FindViewById(Resource.Id.buttonMute)).Click      -= this.Mute_Click;
+            ((Button)FindViewById(Resource.Id.buttonIncrVol)).Click   -= this.IncrVol_Click;
+            ((Button)FindViewById(Resource.Id.buttonBack)).Click      -= this.Back_Click;
+            ((Button)FindViewById(Resource.Id.buttonForwards)).Click  -= this.Forwards_Click;
+            ((Button)FindViewById(Resource.Id.buttonPause)).Click     -= this.Pause_Click;
         }
     }
 }

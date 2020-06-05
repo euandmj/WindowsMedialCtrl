@@ -21,9 +21,8 @@ namespace App1
                     ReceiveTimeout = 1000,
                     SendTimeout = 1000
                 };
-
-                if (!client.Connected)
-                    await client.ConnectAsync(Hostname, Port);
+                
+                await client.ConnectAsync(Hostname, Port);
 
                 using var ns = client.GetStream();
                 byte[] data = Encoding.UTF8.GetBytes(dword);
